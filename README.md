@@ -56,7 +56,7 @@ Note: this assumes you have a JDK installed and configured. If not, look [here](
   5. Create new Pull Request
 
 ## Licensing
-  This plugin is licensed under (GPLv3)[LICENSE].
+  This plugin is licensed under [GPLv3](LICENSE).
 
 
 

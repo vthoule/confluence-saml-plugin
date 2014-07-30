@@ -44,7 +44,7 @@ Note: this assumes you have a JDK installed and configured. If not, look [here](
 ## Documentation
   Docs can be found in the [wiki](https://github.com/bitium/confluence-saml-plugin/wiki)
 
-## Compatability
+## Compatibility
   This plugin is compatible with the [Bitium IdP](https://bitium.com) but other IdP's that support SAML 2.0 may also work. If you have success using it with another system please let us know so we can list that in the wiki.
 
 ## Contributing

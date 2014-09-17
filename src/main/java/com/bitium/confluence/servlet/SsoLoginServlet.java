@@ -47,8 +47,8 @@ import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.seraph.auth.Authenticator;
 import com.atlassian.seraph.auth.DefaultAuthenticator;
 import com.atlassian.seraph.config.SecurityConfigFactory;
-import com.bitium.confluence.config.SAMLConfig;
-import com.bitium.confluence.saml.SAMLContext;
+import com.bitium.confluence.config.SAMLConfluenceConfig;
+import com.bitium.saml.SAMLContext;
 
 
 public class SsoLoginServlet extends HttpServlet {
@@ -56,7 +56,7 @@ public class SsoLoginServlet extends HttpServlet {
 
 	private Log log = LogFactory.getLog(SsoLoginServlet.class);
 
-	private SAMLConfig saml2Config;
+	private SAMLConfluenceConfig saml2Config;
 
 	@Override
 	public void init() throws ServletException {
@@ -151,7 +151,7 @@ public class SsoLoginServlet extends HttpServlet {
 		response.sendRedirect("/confluence/login.action?samlerror=user_not_found");
 	}
 
-	public void setSaml2Config(SAMLConfig saml2Config) {
+	public void setSaml2Config(SAMLConfluenceConfig saml2Config) {
 		this.saml2Config = saml2Config;
 	}
 

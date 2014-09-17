@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.bitium.confluence.config.SAMLConfig;
+import com.bitium.confluence.config.SAMLConfluenceConfig;
 
 
 /**
@@ -40,9 +40,9 @@ import com.bitium.confluence.config.SAMLConfig;
 public class ConfigAjaxServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	private SAMLConfig saml2Config;
+	private SAMLConfluenceConfig saml2Config;
 	
-	public void setSaml2Config(SAMLConfig saml2Config) {
+	public void setSaml2Config(SAMLConfluenceConfig saml2Config) {
 		this.saml2Config = saml2Config;
 	}
 	

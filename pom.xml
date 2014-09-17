@@ -10,6 +10,12 @@
 	<description>Easily configure Confluence to support SAML 2.0</description>
 	<packaging>atlassian-plugin</packaging>
 	<dependencies>
+                <dependency>
+                    <groupId>com.bitium.saml</groupId>
+                    <artifactId>SAML2Commons</artifactId>
+                    <version>1.0</version>
+                    <scope>compile</scope>
+                </dependency>
 		<dependency>
 			<groupId>org.springframework.security.extensions</groupId>
 			<artifactId>spring-security-saml2-core</artifactId>

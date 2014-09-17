@@ -35,11 +35,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.bitium.confluence.config.SAMLConfig;
+import com.bitium.confluence.config.SAMLConfluenceConfig;
 
 public class LoginFilter implements Filter {
 	
-	private SAMLConfig config;
+	private SAMLConfluenceConfig config;
 	private LoginUriProvider loginUriProvider;
 
 	@Override
@@ -67,7 +67,7 @@ public class LoginFilter implements Filter {
 	public void destroy() {
 	}
 
-	public void setConfig(SAMLConfig config) {
+	public void setConfig(SAMLConfluenceConfig config) {
 		this.config = config;
 	}
 

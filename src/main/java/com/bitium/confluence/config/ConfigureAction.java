@@ -29,7 +29,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.atlassian.confluence.core.ConfluenceActionSupport;
-import com.bitium.confluence.util.X509Utils;
+import com.bitium.saml.X509Utils;
 
 public class ConfigureAction extends ConfluenceActionSupport {
 	private static final long serialVersionUID = 1L;
@@ -40,9 +40,9 @@ public class ConfigureAction extends ConfluenceActionSupport {
 	private String x509Certificate;
 	private String idpRequired;
 
-	private SAMLConfig saml2Config;
+	private SAMLConfluenceConfig saml2Config;
 
-	public void setSaml2Config(SAMLConfig saml2Config) {
+	public void setSaml2Config(SAMLConfluenceConfig saml2Config) {
 		this.saml2Config = saml2Config;
 	}
 

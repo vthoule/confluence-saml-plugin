@@ -25,8 +25,9 @@ import org.apache.commons.lang.StringUtils;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.bitium.saml.SAMLConfig;
 
-public class SAMLConfig {
+public class SAMLConfluenceConfig implements SAMLConfig {
 	
 	private PluginSettings pluginSettings;
 

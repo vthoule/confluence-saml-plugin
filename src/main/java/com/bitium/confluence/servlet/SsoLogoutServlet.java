@@ -33,8 +33,8 @@ import org.springframework.security.saml.SAMLCredential;
 import org.springframework.security.saml.context.SAMLMessageContext;
 import org.springframework.security.saml.websso.SingleLogoutProfileImpl;
 
-import com.bitium.confluence.config.SAMLConfig;
-import com.bitium.confluence.saml.SAMLContext;
+import com.bitium.confluence.config.SAMLConfluenceConfig;
+import com.bitium.saml.SAMLContext;
 
 
 public class SsoLogoutServlet extends HttpServlet {
@@ -42,7 +42,7 @@ public class SsoLogoutServlet extends HttpServlet {
 
 	private Log log = LogFactory.getLog(SsoLogoutServlet.class);
 
-	private SAMLConfig saml2Config;
+	private SAMLConfluenceConfig saml2Config;
 
 	@Override
 	public void init() throws ServletException {
@@ -75,7 +75,7 @@ public class SsoLogoutServlet extends HttpServlet {
 
 	}
 
-	public void setSaml2Config(SAMLConfig saml2Config) {
+	public void setSaml2Config(SAMLConfluenceConfig saml2Config) {
 		this.saml2Config = saml2Config;
 	}
 }

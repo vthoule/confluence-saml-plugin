@@ -19,6 +19,11 @@ Note: this assumes you have a JDK installed and configured. If not, look [here](
   [Homebrew Setup](https://developer.atlassian.com/display/DOCS/Install+the+Atlassian+SDK+on+a+Linux+or+Mac+System)
   1. ```brew tap atlassian/tap```
   2. ```brew install atlassian/tap/atlassian-plugin-sdk```
+
+### Install the Atlassian SAML Commons
+
+  1. ```git clone https://github.com/bitium/atlassian-saml.git```
+  2. run maven repository install script ```install_dep.sh```
   
 ### Compile and run the plugin
 

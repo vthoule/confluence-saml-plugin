@@ -74,6 +74,7 @@ public class SsoLoginServlet extends HttpServlet {
 			// Generate options for the current SSO request
 	        WebSSOProfileOptions options = new WebSSOProfileOptions();
 	        options.setBinding(org.opensaml.common.xml.SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+                options.setIncludeScoping(false);
 
 			// Send request
 	        WebSSOProfile webSSOprofile = new WebSSOProfileImpl(context.getSamlProcessor(), context.getMetadataManager());
@@ -101,7 +102,8 @@ public class SsoLoginServlet extends HttpServlet {
 
 	        request.getSession().setAttribute("SAMLCredential", credential);
 
-	        String userName = ((XSAny)credential.getAttributes().get(0).getAttributeValues().get(0)).getTextContent();
+//	        String userName = ((XSAny)credential.getAttributes().get(0).getAttributeValues().get(0)).getTextContent();
+                String userName = credential.getNameID().getValue();
 
 	        authenticateUserAndLogin(request, response, userName);
 		} catch (AuthenticationException e) {

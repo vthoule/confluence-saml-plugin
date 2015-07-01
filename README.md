@@ -23,7 +23,7 @@ Note: this assumes you have a JDK installed and configured. If not, look [here](
 ### Install the Atlassian SAML Commons
 
   1. ```git clone https://github.com/bitium/atlassian-saml.git```
-  2. run maven repository install script ```install_dep.sh```
+  2. install the library with maven: `mvn clean install`
   
 ### Compile and run the plugin
 

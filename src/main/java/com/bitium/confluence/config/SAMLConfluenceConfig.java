@@ -38,6 +38,7 @@ public class SAMLConfluenceConfig implements SAMLConfig {
 	public static final String LOGOUT_URL_SETTING = "saml2.logoutUrl";
 	public static final String X509_CERTIFICATE_SETTING = "saml2.x509Certificate";
 	public static final String IDP_REQUIRED_SETTING = "saml2.idpRequired";
+	public static final String REDIRECT_URL_SETTING = "saml2.redirectUrl";
 	
 	public void setPluginSettingsFactory(PluginSettingsFactory pluginSettingsFactory) {
 		this.pluginSettings = pluginSettingsFactory.createGlobalSettings();
@@ -61,6 +62,10 @@ public class SAMLConfluenceConfig implements SAMLConfig {
 
 	public void setIdpRequired(String idpRequired) {
 		pluginSettings.put(IDP_REQUIRED_SETTING, idpRequired);		
+	}
+	
+	public void setRedirectUrl(String redirectUrl) {
+		pluginSettings.put(REDIRECT_URL_SETTING, redirectUrl);		
 	}
 	
 	public String getIdpRequired() {
@@ -89,6 +94,10 @@ public class SAMLConfluenceConfig implements SAMLConfig {
 
 	public String getX509Certificate() {
 		return StringUtils.defaultString((String)pluginSettings.get(X509_CERTIFICATE_SETTING));
+	}
+	
+	public String getRedirectUrl() {
+		return StringUtils.defaultString((String)pluginSettings.get(REDIRECT_URL_SETTING));
 	}
 
 	public void setDefaultBaseUrl(String defaultBaseURL) {

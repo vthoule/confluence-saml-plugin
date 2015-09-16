@@ -144,7 +144,11 @@ public class SsoLoginServlet extends HttpServlet {
 		    	Boolean result = (Boolean)authUserMethod.invoke(authenticator, new Object[]{request, response, principal});
 
 		        if (result) {
-		        	response.sendRedirect("/confluence/dashboard.action");
+		        	String redirectUrl = saml2Config.getRedirectUrl();
+		        	if (redirectUrl == null || redirectUrl.equals("")){
+		        		redirectUrl = "/confluence/dashboard.action";
+		        	}
+		        	response.sendRedirect(redirectUrl);
 		        	return;
 		        }
 		    }

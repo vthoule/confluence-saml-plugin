@@ -39,6 +39,7 @@ public class ConfigureAction extends ConfluenceActionSupport {
 	private String entityId;
 	private String x509Certificate;
 	private String idpRequired;
+	private String redirectUrl;
 
 	private SAMLConfluenceConfig saml2Config;
 
@@ -87,6 +88,14 @@ public class ConfigureAction extends ConfluenceActionSupport {
 
 	public void setLoginUrl(String loginUrl) {
 		this.loginUrl = loginUrl;
+	}
+
+	public String getRedirectUrl() {
+		return redirectUrl;
+	}
+
+	public void setRedirectUrl(String redirectUrl) {
+		this.redirectUrl = redirectUrl;
 	}
 
 	protected List getPermissionTypes() {
@@ -141,6 +150,7 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		setLogoutUrl(saml2Config.getLogoutUrl());
 		setEntityId(saml2Config.getIdpEntityId());
 		setX509Certificate(saml2Config.getX509Certificate());
+		setRedirectUrl(saml2Config.getRedirectUrl());
 		String idpRequired = saml2Config.getIdpRequired();
 		if (idpRequired != null) {
 			setIdpRequired(idpRequired);
@@ -156,6 +166,7 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		saml2Config.setEntityId(getEntityId());
 		saml2Config.setX509Certificate(getX509Certificate());
 		saml2Config.setIdpRequired(getIdpRequired());
+		saml2Config.setRedirectUrl(getRedirectUrl());
 
 		addActionMessage(getText("saml2plugin.admin.message.saved"));
 		return "success";

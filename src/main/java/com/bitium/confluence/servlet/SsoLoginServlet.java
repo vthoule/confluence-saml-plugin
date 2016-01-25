@@ -20,35 +20,32 @@
  *	along with Pineapple. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.bitium.confluence.servlet;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.security.Principal;
+
+import com.atlassian.confluence.user.ConfluenceAuthenticator;
+import com.atlassian.confluence.user.ConfluenceUser;
+import com.atlassian.confluence.user.UserAccessor;
+import com.atlassian.seraph.auth.Authenticator;
+import com.atlassian.seraph.auth.DefaultAuthenticator;
+import com.atlassian.seraph.config.SecurityConfigFactory;
+import com.atlassian.spring.container.ContainerManager;
+import com.bitium.confluence.config.SAMLConfluenceConfig;
+import com.bitium.saml.SAMLContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.saml.SAMLCredential;
+import org.springframework.security.saml.context.SAMLMessageContext;
+import org.springframework.security.saml.util.SAMLUtil;
+import org.springframework.security.saml.websso.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.opensaml.xml.schema.XSAny;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.saml.SAMLCredential;
-import org.springframework.security.saml.context.SAMLMessageContext;
-import org.springframework.security.saml.util.SAMLUtil;
-import org.springframework.security.saml.websso.WebSSOProfile;
-import org.springframework.security.saml.websso.WebSSOProfileConsumer;
-import org.springframework.security.saml.websso.WebSSOProfileConsumerImpl;
-import org.springframework.security.saml.websso.WebSSOProfileImpl;
-import org.springframework.security.saml.websso.WebSSOProfileOptions;
-
-import com.atlassian.confluence.user.ConfluenceUser;
-import com.atlassian.seraph.auth.Authenticator;
-import com.atlassian.seraph.auth.DefaultAuthenticator;
-import com.atlassian.seraph.config.SecurityConfigFactory;
-import com.bitium.confluence.config.SAMLConfluenceConfig;
-import com.bitium.saml.SAMLContext;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.security.Principal;
 
 
 public class SsoLoginServlet extends HttpServlet {
@@ -129,37 +126,37 @@ public class SsoLoginServlet extends HttpServlet {
 			InvocationTargetException, IOException {
 		Authenticator authenticator = SecurityConfigFactory.getInstance().getAuthenticator();
 
-		if (authenticator instanceof DefaultAuthenticator) {
-			//DefaultAuthenticator defaultAuthenticator = (DefaultAuthenticator)authenticator;
+        if (authenticator instanceof ConfluenceAuthenticator) {
+            UserAccessor userAccessor = (UserAccessor) ContainerManager.getComponent("userAccessor");
+            ConfluenceUser confluenceUser = userAccessor.getUserByName(username);
+            if (confluenceUser == null) {
+                //TODO: Create new confluence user
+            }
 
-		    Method getUserMethod = DefaultAuthenticator.class.getDeclaredMethod("getUser", new Class[]{String.class});
-		    getUserMethod.setAccessible(true);
-		    Object userObject = getUserMethod.invoke(authenticator, new Object[]{username});
-		    if(userObject != null && userObject instanceof ConfluenceUser) {
-		    	Principal principal = (Principal)userObject;
+            if (confluenceUser != null) {
 
-		    	Method authUserMethod = DefaultAuthenticator.class.getDeclaredMethod("authoriseUserAndEstablishSession",
-		    			new Class[]{HttpServletRequest.class, HttpServletResponse.class, Principal.class});
-		    	authUserMethod.setAccessible(true);
-		    	Boolean result = (Boolean)authUserMethod.invoke(authenticator, new Object[]{request, response, principal});
+                //Note: Need to use reflection to call the protected DefaultAuthenticator.authoriseUserAndEstablishSession
+                Principal principal = confluenceUser;
 
-		        if (result) {
-		        	String redirectUrl = saml2Config.getRedirectUrl();
-		        	if (redirectUrl == null || redirectUrl.equals("")){
-		        		redirectUrl = "/confluence/dashboard.action";
-		        	}
-		        	response.sendRedirect(redirectUrl);
-		        	return;
-		        }
-		    }
-		}
+                Method authUserMethod = DefaultAuthenticator.class.getDeclaredMethod("authoriseUserAndEstablishSession",
+                        new Class[]{HttpServletRequest.class, HttpServletResponse.class, Principal.class});
+                authUserMethod.setAccessible(true);
+                Boolean result = (Boolean)authUserMethod.invoke(authenticator, new Object[]{request, response, principal});
 
+                if (result) {
+                    String redirectUrl = saml2Config.getRedirectUrl();
+                    if (redirectUrl == null || redirectUrl.equals("")) {
+                        redirectUrl = "/confluence/dashboard.action";
+                    }
+                    response.sendRedirect(redirectUrl);
+                    return;
+                }
+            }
+        }
 		response.sendRedirect("/confluence/login.action?samlerror=user_not_found");
 	}
 
 	public void setSaml2Config(SAMLConfluenceConfig saml2Config) {
 		this.saml2Config = saml2Config;
 	}
-
-
 }

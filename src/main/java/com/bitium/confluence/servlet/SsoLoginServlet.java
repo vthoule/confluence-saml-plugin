@@ -21,6 +21,7 @@
  */
 package com.bitium.confluence.servlet;
 
+import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.ConfluenceAuthenticator;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.UserAccessor;
@@ -28,6 +29,9 @@ import com.atlassian.seraph.auth.Authenticator;
 import com.atlassian.seraph.auth.DefaultAuthenticator;
 import com.atlassian.seraph.config.SecurityConfigFactory;
 import com.atlassian.spring.container.ContainerManager;
+import com.atlassian.user.Group;
+import com.atlassian.user.impl.DefaultUser;
+import com.atlassian.user.security.password.Credential;
 import com.bitium.confluence.config.SAMLConfluenceConfig;
 import com.bitium.saml.SAMLContext;
 import org.apache.commons.logging.Log;
@@ -46,14 +50,20 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Principal;
+import java.util.List;
 
 
 public class SsoLoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private Log log = LogFactory.getLog(SsoLoginServlet.class);
+    //TODO: Make this default group configurable via the SAML Plugin Config
+    private static final String DEFAULT_NEW_USER_GROUP = "confluence-users";
+
+    private Log log = LogFactory.getLog(SsoLoginServlet.class);
 
 	private SAMLConfluenceConfig saml2Config;
+
+    private SAMLCredential credential;
 
 	@Override
 	public void init() throws ServletException {
@@ -95,7 +105,7 @@ public class SsoLoginServlet extends HttpServlet {
 	        messageContext.getPeerEntityMetadata().setEntityID(saml2Config.getIdpEntityId());
 
 	        WebSSOProfileConsumer consumer = new WebSSOProfileConsumerImpl(context.getSamlProcessor(), context.getMetadataManager());
-	        SAMLCredential credential = consumer.processAuthenticationResponse(messageContext);
+	        credential = consumer.processAuthenticationResponse(messageContext);
 
 	        request.getSession().setAttribute("SAMLCredential", credential);
 
@@ -130,7 +140,7 @@ public class SsoLoginServlet extends HttpServlet {
             UserAccessor userAccessor = (UserAccessor) ContainerManager.getComponent("userAccessor");
             ConfluenceUser confluenceUser = userAccessor.getUserByName(username);
             if (confluenceUser == null) {
-                //TODO: Create new confluence user
+                confluenceUser = tryCreateOrUpdateUser(username);
             }
 
             if (confluenceUser != null) {
@@ -156,7 +166,41 @@ public class SsoLoginServlet extends HttpServlet {
 		response.sendRedirect("/confluence/login.action?samlerror=user_not_found");
 	}
 
-	public void setSaml2Config(SAMLConfluenceConfig saml2Config) {
+    private ConfluenceUser tryCreateOrUpdateUser(String username) {
+        if (saml2Config.getAutoCreateUserFlag()){
+            UserAccessor userAccessor = (UserAccessor) ContainerManager.getComponent("userAccessor");
+
+            String fullName = credential.getAttributeAsString("cn");
+            String email = credential.getAttributeAsString("mail");
+
+            log.warn("Creating user account for " + username );
+            ConfluenceUser createdUser = userAccessor.createUser(new DefaultUser(username, fullName, email), Credential.NONE);
+
+            // Find the first administrator user and use it to add the user to the confluence-users group if it exists
+            ConfluenceUser administratorUser = getAdministratorUser();
+            Group confluenceUsersGroup = userAccessor.getGroup(DEFAULT_NEW_USER_GROUP);
+            if (administratorUser != null && confluenceUsersGroup != null) {
+                AuthenticatedUserThreadLocal.set(administratorUser);
+                userAccessor.addMembership(confluenceUsersGroup, createdUser);
+            }
+            return createdUser;
+        } else {
+            // not allowed to auto-create user
+            log.error("User not found and auto-create disabled: " + username);
+        }
+        return null;
+    }
+
+    private ConfluenceUser getAdministratorUser() {
+        UserAccessor userAccessor = (UserAccessor) ContainerManager.getComponent("userAccessor");
+        List<String> administratorNames = userAccessor.getMemberNamesAsList(userAccessor.getGroup("confluence-administrators"));
+        if (administratorNames != null && administratorNames.size() > 0) {
+            return userAccessor.getUserByName(administratorNames.get(0));
+        }
+        return null;
+    }
+
+    public void setSaml2Config(SAMLConfluenceConfig saml2Config) {
 		this.saml2Config = saml2Config;
 	}
 }

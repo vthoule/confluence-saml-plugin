@@ -37,6 +37,7 @@ public class ConfigureAction extends ConfluenceActionSupport {
 	private String loginUrl;
 	private String logoutUrl;
 	private String entityId;
+	private String autoCreateUser;
 	private String x509Certificate;
 	private String idpRequired;
 	private String redirectUrl;
@@ -72,6 +73,14 @@ public class ConfigureAction extends ConfluenceActionSupport {
 
 	public void setEntityId(String entityId) {
 		this.entityId = entityId;
+	}
+
+	public String getAutoCreateUser() {
+		return autoCreateUser;
+	}
+
+	public void setAutoCreateUser(String autoCreateUser) {
+		this.autoCreateUser = autoCreateUser;
 	}
 
 	public String getLogoutUrl() {
@@ -141,6 +150,11 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		} else {
 			setIdpRequired("true");
 		}
+		if (StringUtils.isBlank(getAutoCreateUser())) {
+			setAutoCreateUser("false");
+		} else {
+			setAutoCreateUser("true");
+		}
 
 		super.validate();
 	}
@@ -167,6 +181,7 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		saml2Config.setX509Certificate(getX509Certificate());
 		saml2Config.setIdpRequired(getIdpRequired());
 		saml2Config.setRedirectUrl(getRedirectUrl());
+		saml2Config.setAutoCreateUser(getAutoCreateUser());
 
 		addActionMessage(getText("saml2plugin.admin.message.saved"));
 		return "success";

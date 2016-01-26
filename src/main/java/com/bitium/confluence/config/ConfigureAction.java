@@ -171,6 +171,12 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		} else {
 			setIdpRequired("false");
 		}
+		String autoCreateUser = saml2Config.getAutoCreateUser();
+		if (autoCreateUser != null) {
+			setAutoCreateUser(autoCreateUser);
+		} else {
+			setAutoCreateUser("false");
+		}
 		return super.doDefault();
 	}
 

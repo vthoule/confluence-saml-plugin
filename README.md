@@ -36,6 +36,10 @@ Note: this assumes you have a JDK installed and configured. If not, look [here](
   5. click the "cog" menu and select "add-ons"
   6. enter "SAML" into the search box and select "All Add-ons" from the dropdown 
 
+### Tips
+  1. Use Atlassian [QuickReload](https://developer.atlassian.com/docs/developer-tools/automatic-plugin-reinstallation-with-quickreload) plugin to speed up developement by automatically deploying changes without needing to restart the host application.
+  2. A remote debugger can be attached after launching the host app using ```atlas-debug --product confluence```, see [Creating a Remote Debug Target](https://developer.atlassian.com/docs/developer-tools/working-in-an-ide/creating-a-remote-debug-target)
+
 ### Packaging and installing manually
 
   1. In the project directory, run ```atlas-package``` to generate a jar

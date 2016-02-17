@@ -24,7 +24,8 @@ package com.bitium.confluence.config;
 import com.bitium.saml.config.SAMLConfig;
 
 public class SAMLConfluenceConfig extends SAMLConfig {
-	
+	public static final String DEFAULT_AUTOCREATE_USER_GROUP = "confluence-users";
+
 	public String getAlias() {
 		return "confluenceSAML";
 	}

@@ -11,6 +11,7 @@ import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.user.Group;
 import com.atlassian.user.impl.DefaultUser;
 import com.atlassian.user.security.password.Credential;
+import com.bitium.confluence.config.SAMLConfluenceConfig;
 import com.bitium.saml.servlet.SsoLoginServlet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,9 +20,6 @@ import java.util.List;
 
 
 public class SsoConfluenceLoginServlet extends SsoLoginServlet {
-    //TODO: Make this default group configurable via the SAML Plugin Config
-    private static final String DEFAULT_NEW_USER_GROUP = "confluence-users";
-
 	protected void authenticateUserAndLogin(HttpServletRequest request,
 			HttpServletResponse response, String username)
 			throws Exception {
@@ -61,7 +59,13 @@ public class SsoConfluenceLoginServlet extends SsoLoginServlet {
 
             // Find the first administrator user and use it to add the user to the confluence-users group if it exists
             ConfluenceUser administratorUser = getAdministratorUser();
-            Group confluenceUsersGroup = userAccessor.getGroup(DEFAULT_NEW_USER_GROUP);
+
+            String defaultGroup = saml2Config.getAutoCreateUserDefaultGroup();
+            if (defaultGroup.isEmpty()) {
+                defaultGroup = SAMLConfluenceConfig.DEFAULT_AUTOCREATE_USER_GROUP;
+            }
+
+            Group confluenceUsersGroup = userAccessor.getGroup(defaultGroup);
             if (administratorUser != null && confluenceUsersGroup != null) {
                 AuthenticatedUserThreadLocal.set(administratorUser);
                 userAccessor.addMembership(confluenceUsersGroup, createdUser);

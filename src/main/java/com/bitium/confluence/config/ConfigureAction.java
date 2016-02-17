@@ -24,8 +24,12 @@ package com.bitium.confluence.config;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.atlassian.confluence.user.UserAccessor;
+import com.atlassian.spring.container.ContainerManager;
+import com.atlassian.user.Group;
 import org.apache.commons.lang.StringUtils;
 
 import com.atlassian.confluence.core.ConfluenceActionSupport;
@@ -38,9 +42,12 @@ public class ConfigureAction extends ConfluenceActionSupport {
 	private String logoutUrl;
 	private String entityId;
 	private String autoCreateUser;
+	private String defaultAutoCreateUserGroup;
 	private String x509Certificate;
 	private String idpRequired;
 	private String redirectUrl;
+	private ArrayList<String> existingGroups;
+
 
 	private SAMLConfluenceConfig saml2Config;
 
@@ -107,6 +114,29 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		this.redirectUrl = redirectUrl;
 	}
 
+	public String getDefaultAutoCreateUserGroup() {
+		return defaultAutoCreateUserGroup;
+	}
+
+	public void setDefaultAutoCreateUserGroup(String defaultAutoCreateUserGroup) {
+		this.defaultAutoCreateUserGroup = defaultAutoCreateUserGroup;
+	}
+
+	public ArrayList<String> getExistingGroups() {
+		UserAccessor userAccessor = (UserAccessor) ContainerManager.getComponent("userAccessor");
+		List<Group> groupObjects = userAccessor.getGroupsAsList();
+		existingGroups = new ArrayList<String>();
+		for (Group groupObject : groupObjects) {
+			existingGroups.add(groupObject.getName());
+		}
+		setExistingGroups(existingGroups);
+		return existingGroups;
+	}
+
+	public void setExistingGroups(ArrayList<String> existingGroups) {
+		this.existingGroups = existingGroups;
+	}
+
 	protected List getPermissionTypes() {
 		List requiredPermissions = super.getPermissionTypes();
 		requiredPermissions.add("ADMINISTRATECONFLUENCE");
@@ -166,17 +196,27 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		setX509Certificate(saml2Config.getX509Certificate());
 		setRedirectUrl(saml2Config.getRedirectUrl());
 		String idpRequired = saml2Config.getIdpRequired();
+
 		if (idpRequired != null) {
 			setIdpRequired(idpRequired);
 		} else {
 			setIdpRequired("false");
 		}
+
 		String autoCreateUser = saml2Config.getAutoCreateUser();
 		if (autoCreateUser != null) {
 			setAutoCreateUser(autoCreateUser);
 		} else {
 			setAutoCreateUser("false");
 		}
+
+		String defaultAutocreateUserGroup = saml2Config.getAutoCreateUserDefaultGroup();
+		if (defaultAutocreateUserGroup.isEmpty()) {
+			// NOTE: Set the default to "confluence-users".
+			// This is used when configuring the plugin for the first time and no default was set
+			defaultAutocreateUserGroup = SAMLConfluenceConfig.DEFAULT_AUTOCREATE_USER_GROUP;
+		}
+		setDefaultAutoCreateUserGroup(defaultAutocreateUserGroup);
 		return super.doDefault();
 	}
 
@@ -188,6 +228,7 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		saml2Config.setIdpRequired(getIdpRequired());
 		saml2Config.setRedirectUrl(getRedirectUrl());
 		saml2Config.setAutoCreateUser(getAutoCreateUser());
+		saml2Config.setAutoCreateUserDefaultGroup(getDefaultAutoCreateUserGroup());
 
 		addActionMessage(getText("saml2plugin.admin.message.saved"));
 		return "success";

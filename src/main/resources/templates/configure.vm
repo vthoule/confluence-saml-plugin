@@ -69,7 +69,7 @@
 
     <div class="field-desc field-desc-checkbox">$i18n.getText("saml2plugin.admin.field.autoCreateUser.desc")</div>
 
-    <div class="field-label">Default User Group</div>
+    <div class="field-label">$i18n.getText("saml2plugin.admin.field.autoCreateUserDefaultGroup")</div>
     <select class="field-select" name="defaultAutoCreateUserGroup" id="defaultAutoCreateUserGroup">
         #foreach( $group in $existingGroups )
             <option value="$group"
@@ -78,7 +78,7 @@
                 #end>$group</option>
         #end
     </select>
-    <div class="field-desc">Auto created users will automatically be added to the selected user group</div>
+    <div class="field-desc">$i18n.getText("saml2plugin.admin.field.autoCreateUserDefaultGroup.desc")</div>
 
     <div class="config_form_actions">
         <input class="aui-button aui-button-primary" type="submit"

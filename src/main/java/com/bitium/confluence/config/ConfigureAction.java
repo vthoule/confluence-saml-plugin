@@ -46,6 +46,7 @@ public class ConfigureAction extends ConfluenceActionSupport {
 	private String x509Certificate;
 	private String idpRequired;
 	private String redirectUrl;
+	private String maxAuthenticationAge;
 	private ArrayList<String> existingGroups;
 
 
@@ -112,6 +113,14 @@ public class ConfigureAction extends ConfluenceActionSupport {
 
 	public void setRedirectUrl(String redirectUrl) {
 		this.redirectUrl = redirectUrl;
+	}
+	
+	public void setMaxAuthenticationAge(String maxAuthenticationAge) {
+		this.maxAuthenticationAge=maxAuthenticationAge;
+	}
+	
+	public String getMaxAuthenticationAge() {
+		return this.maxAuthenticationAge;
 	}
 
 	public String getDefaultAutoCreateUserGroup() {
@@ -185,6 +194,10 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		} else {
 			setAutoCreateUser("true");
 		}
+		
+		if(StringUtils.isBlank(getMaxAuthenticationAge()) || (!StringUtils.isNumeric(getMaxAuthenticationAge()))){
+			addActionError(getText("saml2Plugin.admin.maxAuthenticationAgeInvalid"));
+		}
 
 		super.validate();
 	}
@@ -195,6 +208,17 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		setEntityId(saml2Config.getIdpEntityId());
 		setX509Certificate(saml2Config.getX509Certificate());
 		setRedirectUrl(saml2Config.getRedirectUrl());
+		long maxAuthenticationAge = saml2Config.getMaxAuthenticationAge();
+		
+		//Default Value
+		if(maxAuthenticationAge==Long.MIN_VALUE){
+			setMaxAuthenticationAge("7200");
+		}
+		//Stored Value
+		else{
+			setMaxAuthenticationAge(String.valueOf(maxAuthenticationAge));
+		}
+				
 		String idpRequired = saml2Config.getIdpRequired();
 
 		if (idpRequired != null) {
@@ -229,6 +253,7 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		saml2Config.setRedirectUrl(getRedirectUrl());
 		saml2Config.setAutoCreateUser(getAutoCreateUser());
 		saml2Config.setAutoCreateUserDefaultGroup(getDefaultAutoCreateUserGroup());
+		saml2Config.setMaxAuthenticationAge(Long.parseLong(getMaxAuthenticationAge()));
 
 		addActionMessage(getText("saml2plugin.admin.message.saved"));
 		return "success";

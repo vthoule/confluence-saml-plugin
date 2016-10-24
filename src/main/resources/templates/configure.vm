@@ -53,6 +53,10 @@
     <input class="field-input" type="text" name="redirectUrl" id="redirectUrl"
            value="$generalUtil.htmlEncode( $redirectUrl )"/>
     <div class="field-desc">$i18n.getText("saml2plugin.admin.field.redirectUrl.desc")</div>
+    <div class="field-label">$i18n.getText("saml2plugin.admin.field.maxAuthenticationAge")</div>
+    <input class="field-input" type="text" name="maxAuthenticationAge" id="maxAuthenticationAge"
+           value="$maxAuthenticationAge"/>
+    <div class="field-desc">$i18n.getText("saml2plugin.admin.field.maxAuthenticationAge.desc")</div>
     <div class="field-label field-label-checkbox">
         <input type="checkbox" name="idpRequired" id="idpRequired" class="checkbox"
             #if ($idpRequired.equals("true"))

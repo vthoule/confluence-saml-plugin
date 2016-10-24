@@ -50,6 +50,7 @@ AJS.$(function() {
             window.location.href = response;
             return;
           }
+          AJS.$(".aui.login-form-container").show();
         }
       });
       return;

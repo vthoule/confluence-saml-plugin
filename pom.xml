@@ -12,7 +12,7 @@
         <dependency>
             <groupId>com.bitium.saml</groupId>
             <artifactId>SAML2Commons</artifactId>
-            <version>1.1</version>
+            <version>1.1.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

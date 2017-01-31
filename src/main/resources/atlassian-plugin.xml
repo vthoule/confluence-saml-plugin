@@ -21,74 +21,110 @@ You should have received a copy of the GNU General Public License
 along with Pineapple. If not, see <http://www.gnu.org/licenses/>.  
 -->
 <atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
-  <plugin-info>
-    <description>${project.description}</description>
-    <version>${project.version}</version>
-    <vendor name="Bitium" url="http://www.bitium.com"/>
-    <param name="plugin-icon">images/pluginIcon.png</param>
-    <param name="plugin-logo">images/pluginLogo.png</param>
-    <param name="configure.url">/admin/plugins/saml2plugin/configure.action</param>
-  </plugin-info>
+	<plugin-info>
+		<description>${project.description}</description>
+		<version>${project.version}</version>
+		<vendor name="Bitium" url="http://www.bitium.com" />
+		<param name="plugin-icon">images/pluginIcon.png</param>
+		<param name="plugin-logo">images/pluginLogo.png</param>
+		<param name="configure.url">/admin/plugins/saml2plugin/configure.action</param>
+	</plugin-info>
 
-  <resource type="download" name="images/" location="images/" />
-  <resource type="i18n" name="i18n" location="SAML2Plugin"/>
-   
-  <web-resource key="loginAuth-plugin" name="Login auth plugin">
-    <resource name="loginAuth.js" type="download" location="loginAuth.js"/>
-    <context>atl.general</context>
-  </web-resource>
+	<resource type="download" name="images/" location="images/" />
+	<resource type="i18n" name="i18n" location="SAML2Plugin" />
+	<resource type="i18n" name="i18n.statuses" location="SAMLStatuses" />
 
-  <web-resource key="admin-resources" name="Admin web resources">
-    <resource name="configPlugin.css" type="download" location="configPlugin.css"/>
-    <resource name="ZeroClipboard.js" type="download" location="ZeroClipboard.js"/>
-    <resource name="ZeroClipboard.swf" type="download" location="ZeroClipboard.swf"/>
-    <resource name="configPlugin.js" type="download" location="configPlugin.js"/>
-    <context>atl.admin</context>
-  </web-resource>  
+	<web-resource key="loginAuth-plugin" name="Login auth plugin">
+		<resource name="loginAuth.js" type="download" location="loginAuth.js" />
+		<context>atl.general</context>
+	</web-resource>
 
-  <component key="samlConfig" class="com.bitium.confluence.config.SAMLConfluenceConfig" />
+	<web-resource key="admin-resources" name="Admin web resources">
+		<resource name="configPlugin.css" type="download" location="configPlugin.css" />
+		<resource name="ZeroClipboard.js" type="download" location="ZeroClipboard.js" />
+		<resource name="ZeroClipboard.swf" type="download" location="ZeroClipboard.swf" />
+		<resource name="configPlugin.js" type="download" location="configPlugin.js" />
+		<context>atl.admin</context>
+	</web-resource>
 
-  <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
-  <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
-  <component-import name="LoginUriProvider " key="loginUriProvider " interface="com.atlassian.sal.api.auth.LoginUriProvider"/>
+	<component key="samlConfig" class="com.bitium.confluence.config.SAMLConfluenceConfig" />
 
-  <!-- Authentication servlet. Redirects a user to IDP and then logs him in, if authentication was successfull -->
-  <servlet name="SAML 2 Login Servlet" i18n-name-key="saml-login-servlet.name" key="saml-login-servlet" class="com.bitium.confluence.servlet.SsoConfluenceLoginServlet">
-    <description key="saml-login-servlet.description">The SAML 2 Login Servlet Plugin</description>
-    <url-pattern>/saml/auth</url-pattern>
-  </servlet>
-  
-  <!-- Logout servlet. Redirects a user to IDP and then logouts him  -->
-  <servlet name="SAML 2 Logout Servlet" i18n-name-key="saml-logout-servlet.name" key="saml-logout-servlet" class="com.bitium.saml.servlet.SsoLogoutServlet">
-    <description key="saml-logout-servlet.description">The SAML 2 Logout Servlet Plugin</description>
-    <url-pattern>/saml/logout</url-pattern>
-  </servlet>
+	<component key="SAMLStatusCodesProvider" class="com.bitium.saml.SAMLStatusCodesProvider" />
 
-  <servlet name="SAML 2 Config service Servlet" i18n-name-key="saml-config-servlet.name" key="saml-config-servlet" class="com.bitium.saml.servlet.ConfigAjaxServlet">
-    <description key="saml-config-servlet.description">The SAML 2 Login Servlet Plugin</description>
-    <url-pattern>/saml/getajaxconfig</url-pattern>
-  </servlet>
+	<component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
+	<component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
+	<component-import name="LoginUriProvider " key="loginUriProvider " interface="com.atlassian.sal.api.auth.LoginUriProvider" />
 
-  <servlet-filter name="Saml2LoginFilter" key="saml2LoginFilter" location="before-login" class="com.bitium.saml.filter.LoginFilter" weight="0">
-    <description>Denies user non-SSO authentication if he tries to bypass login dialog.</description>
-    <url-pattern>/dologin.action*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-  </servlet-filter>
+	<!-- Authentication servlet. Redirects a user to IDP and then logs him in, if authentication was successfull -->
+	<servlet name="SAML 2 Login Servlet" i18n-name-key="saml-login-servlet.name" key="saml-login-servlet"
+		class="com.bitium.confluence.servlet.SsoConfluenceLoginServlet">
+		<description key="saml-login-servlet.description">The SAML 2 Login Servlet Plugin</description>
+		<url-pattern>/saml/auth</url-pattern>
+	</servlet>
 
-  <xwork name="XWork Actions" key="saml2-configure-xwork">
-        <package name="Saml2 configuration package" extends="default" namespace="/admin/plugins/saml2plugin">
-            <action name="configure" class="com.bitium.confluence.config.ConfigureAction" method="doDefault">
-                <interceptor-ref name="defaultStack"/>
-                <result name="input" type="velocity">/templates/configure.vm</result>
-		<result name="error" type="velocity">/templates/configure.vm</result>
-            </action>
-            <action name="doconfigure" class="com.bitium.confluence.config.ConfigureAction" method="execute">
-                <param name="RequireSecurityToken">true</param>
-                <interceptor-ref name="validatingStack"/>
-		<result name="input" type="velocity">/templates/configure.vm</result>
-                <result name="success" type="velocity">/templates/configure.vm</result>
-		<result name="error" type="velocity">/templates/configure.vm</result>
-            </action>
-        </package>
-    </xwork>
+	<!-- Logout servlet. Redirects a user to IDP and then logouts him -->
+	<servlet name="SAML 2 Logout Servlet" i18n-name-key="saml-logout-servlet.name" key="saml-logout-servlet" class="com.bitium.saml.servlet.SsoLogoutServlet">
+		<description key="saml-logout-servlet.description">The SAML 2 Logout Servlet Plugin</description>
+		<url-pattern>/saml/logout</url-pattern>
+	</servlet>
+
+	<servlet name="SAML 2 Config service Servlet" i18n-name-key="saml-config-servlet.name" key="saml-config-servlet"
+		class="com.bitium.saml.servlet.ConfigAjaxServlet">
+		<description key="saml-config-servlet.description">The SAML 2 Login Servlet Plugin</description>
+		<url-pattern>/saml/getajaxconfig</url-pattern>
+	</servlet>
+
+	<servlet-filter name="Saml2LoginFilter" key="saml2LoginFilter" location="before-login" class="com.bitium.saml.filter.LoginFilter"
+		weight="0">
+		<description>Denies user non-SSO authentication if he tries to bypass login dialog.</description>
+		<url-pattern>/dologin.action*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+	</servlet-filter>
+	
+	<web-item name="SAML 2.0 Configuration" i18n-name-key="saml2plugin.config" key="saml2plugin-config" section="top_system_section/security_section"
+		weight="150" application="jira">
+		<description key="saml2plugin.config">SAML 2.0 Plugin Configuration</description>
+		<label key="saml2plugin.config">SAML 2.0 Plugin Configuration</label>
+		<link linkId="saml2plugin.config.link">/secure/admin/saml2pluginjira.configure.jspa</link>
+	</web-item>
+
+	<xwork name="XWork Actions" key="saml2-configure-xwork">
+		<package name="Saml2 configuration package" extends="default" namespace="/admin/plugins/saml2plugin">
+			<action name="configure" class="com.bitium.confluence.config.ConfigureAction" method="doDefault">
+				<interceptor-ref name="defaultStack" />
+				<result name="input" type="velocity">/templates/configure.vm</result>
+				<result name="error" type="velocity">/templates/configure.vm</result>
+			</action>
+			<action name="doconfigure" class="com.bitium.confluence.config.ConfigureAction" method="execute">
+				<param name="RequireSecurityToken">true</param>
+				<interceptor-ref name="validatingStack" />
+				<result name="input" type="velocity">/templates/configure.vm</result>
+				<result name="success" type="velocity">/templates/configure.vm</result>
+				<result name="error" type="velocity">/templates/configure.vm</result>
+			</action>
+		</package>
+	</xwork>
+
+	<web-resource key="aui-logout-resources" name="Logged Out  web resources">
+		<resource name="aui-logout.css" type="download" location="aui-logout.css" />
+		<context>atl.general</context>
+	</web-resource>
+
+	<!-- <servlet name="LogoutMessage" i18n-name-key="logout.message.name" key="LogoutMessage" class="fr.laposte.pdl.servlet.LogoutMessageServlet"> 
+		<description key="LogoutMessage.description">Logout Message</description> <url-pattern>/LogoutMessage</url-pattern> </servlet> -->
+
+	<xwork key="LoggedOutAction" name="LoggedOut Actions">
+		<package name="Logout Message package" extends="default" namespace="/plugins/saml2plugin">
+			<default-interceptor-ref name="defaultStack" />
+			<action name="SAMLLoggedOut" class="com.bitium.confluence.logout.SAMLLoggedOut" >
+				<interceptor-ref name="defaultStack" />
+				<param name="RequireSecurityToken">false</param>
+				<result name="input" type="velocity">/templates/logout-confluence.vm</result>
+				<result name="success" type="velocity">/templates/logout-confluence.vm</result>
+				<result name="error" type="velocity">/templates/logout-confluence.vm</result>
+			</action>
+
+		</package>
+	</xwork>
+
 </atlassian-plugin>

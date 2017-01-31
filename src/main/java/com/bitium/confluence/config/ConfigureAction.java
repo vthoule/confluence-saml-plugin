@@ -30,6 +30,7 @@ import java.util.List;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.user.Group;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.atlassian.confluence.core.ConfluenceActionSupport;
@@ -41,12 +42,16 @@ public class ConfigureAction extends ConfluenceActionSupport {
 	private String loginUrl;
 	private String logoutUrl;
 	private String entityId;
+	private String uidAttribute;
 	private String autoCreateUser;
 	private String defaultAutoCreateUserGroup;
 	private String x509Certificate;
 	private String idpRequired;
 	private String redirectUrl;
 	private String maxAuthenticationAge;
+	private String urlOnLoginError;
+	private String loggedOutPageTemplate;
+
 	private ArrayList<String> existingGroups;
 
 
@@ -83,6 +88,22 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		this.entityId = entityId;
 	}
 
+	public String getUidAttribute() {
+		return uidAttribute;
+	}
+
+	public void setUidAttribute(String uidAttribute) {
+		this.uidAttribute = uidAttribute;
+	}
+	
+	public void setMaxAuthenticationAge(String maxAuthenticationAge) {
+		this.maxAuthenticationAge=maxAuthenticationAge;
+	}
+	
+	public String getMaxAuthenticationAge() {
+		return this.maxAuthenticationAge;
+	}
+
 	public String getAutoCreateUser() {
 		return autoCreateUser;
 	}
@@ -114,14 +135,22 @@ public class ConfigureAction extends ConfluenceActionSupport {
 	public void setRedirectUrl(String redirectUrl) {
 		this.redirectUrl = redirectUrl;
 	}
-	
-	public void setMaxAuthenticationAge(String maxAuthenticationAge) {
-		this.maxAuthenticationAge=maxAuthenticationAge;
+
+	public String getUrlOnLoginError() {
+		return urlOnLoginError;
 	}
-	
-	public String getMaxAuthenticationAge() {
-		return this.maxAuthenticationAge;
+
+	public void setUrlOnLoginError(String urlOnLoginError) {
+		this.urlOnLoginError = urlOnLoginError;
 	}
+
+	public String getLoggedOutPageTemplate() {
+		return loggedOutPageTemplate;
+	}
+
+	public void setLoggedOutPageTemplate(String loggedOutPageTemplate) {
+		this.loggedOutPageTemplate = loggedOutPageTemplate;
+	}	
 
 	public String getDefaultAutoCreateUserGroup() {
 		return defaultAutoCreateUserGroup;
@@ -175,6 +204,9 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		if (StringUtils.isBlank(getEntityId())) {
 			addActionError(getText("saml2Plugin.admin.entityIdEmpty"));
 		}
+		if (StringUtils.isBlank(getUidAttribute())) {
+			addActionError(getText("saml2Plugin.admin.uidAttributeEmpty"));
+		}
 		if (StringUtils.isBlank(getX509Certificate())) {
 			addActionError(getText("saml2Plugin.admin.x509CertificateEmpty"));
 		} else {
@@ -206,8 +238,10 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		setLoginUrl(saml2Config.getLoginUrl());
 		setLogoutUrl(saml2Config.getLogoutUrl());
 		setEntityId(saml2Config.getIdpEntityId());
+			setUidAttribute(saml2Config.getUidAttribute());
 		setX509Certificate(saml2Config.getX509Certificate());
 		setRedirectUrl(saml2Config.getRedirectUrl());
+			setLoggedOutPageTemplate(saml2Config.getLoggedOutPageTemplate());
 		long maxAuthenticationAge = saml2Config.getMaxAuthenticationAge();
 		
 		//Default Value
@@ -248,12 +282,15 @@ public class ConfigureAction extends ConfluenceActionSupport {
 		saml2Config.setLoginUrl(getLoginUrl());
 		saml2Config.setLogoutUrl(getLogoutUrl());
 		saml2Config.setEntityId(getEntityId());
+		saml2Config.setUidAttribute(getUidAttribute());
 		saml2Config.setX509Certificate(getX509Certificate());
 		saml2Config.setIdpRequired(getIdpRequired());
 		saml2Config.setRedirectUrl(getRedirectUrl());
 		saml2Config.setAutoCreateUser(getAutoCreateUser());
 		saml2Config.setAutoCreateUserDefaultGroup(getDefaultAutoCreateUserGroup());
 		saml2Config.setMaxAuthenticationAge(Long.parseLong(getMaxAuthenticationAge()));
+		saml2Config.setUrlOnLoginError(getUrlOnLoginError());
+		saml2Config.setLoggedOutPageTemplate(getLoggedOutPageTemplate());
 
 		addActionMessage(getText("saml2plugin.admin.message.saved"));
 		return "success";

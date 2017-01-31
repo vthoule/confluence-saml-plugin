@@ -35,28 +35,58 @@
         <span id="endpoint-copied" class="config_form_copied">$i18n.getText("saml2plugin.admin.endpoint-copied")</span>
     </div>
     <div class="field-desc">$i18n.getText("saml2plugin.admin.field.samlEndpoint.desc")</div>
+    
+    ## Login URL
     <div class="field-label">$i18n.getText("saml2plugin.admin.field.loginUrl")</div>
     <input class="field-input" type="text" name="loginUrl" id="loginUrl" value="$generalUtil.htmlEncode( $loginUrl )"/>
     <div class="field-desc">$i18n.getText("saml2plugin.admin.field.loginUrl.desc")</div>
+    
+    ## Logout URL
     <div class="field-label">$i18n.getText("saml2plugin.admin.field.logoutUrl")</div>
-    <input class="field-input" type="text" name="logoutUrl" id="logoutUrl"
-           value="$generalUtil.htmlEncode( $logoutUrl )"/>
+    <input class="field-input" type="text" name="logoutUrl" id="logoutUrl" value="$generalUtil.htmlEncode( $logoutUrl )"/>
     <div class="field-desc">$i18n.getText("saml2plugin.admin.field.logoutUrl.desc")</div>
+    
+    ## SAML UID Attribute
+    	<div class="field-label">$i18n.getText("saml2plugin.admin.field.uidAttribute")</div>
+        <input class="field-input" type="text" name="uidAttribute" id="uidAttribute"
+               value="$generalUtil.htmlEncode( $uidAttribute)"/>
+        <div class="field-desc">$i18n.getText("saml2plugin.admin.field.uidAttribute.desc")</div>
+    
+    ## SAML X509 Certificate
     <div class="field-label">$i18n.getText("saml2plugin.admin.field.x509Certificate")</div>
     <textarea class="field-input" name="x509Certificate" id="x509Certificate"
               rows="10">$generalUtil.htmlEncode( $x509Certificate )</textarea>
     <div class="field-desc">$i18n.getText("saml2plugin.admin.field.x509Certificate.desc")</div>
+
+    ## Entity Id
     <div class="field-label">$i18n.getText("saml2plugin.admin.field.entityId")</div>
     <input class="field-input" type="text" name="entityId" id="entityId" value="$generalUtil.htmlEncode( $entityId )"/>
     <div class="field-desc">$i18n.getText("saml2plugin.admin.field.entityId.desc")</div>
+
+    ## Redirect URL
     <div class="field-label">$i18n.getText("saml2plugin.admin.field.redirectUrl")</div>
     <input class="field-input" type="text" name="redirectUrl" id="redirectUrl"
            value="$generalUtil.htmlEncode( $redirectUrl )"/>
     <div class="field-desc">$i18n.getText("saml2plugin.admin.field.redirectUrl.desc")</div>
+
+    ## Logout URL
+    <div class="field-label">$i18n.getText("saml2plugin.admin.field.urlOnLoginError")</div>
+    <input class="field-input" type="text" name="urlOnLoginError" id="urlOnLoginError" value="$generalUtil.htmlEncode( $urlOnLoginError )"/>
+    <div class="field-desc">$i18n.getText("saml2plugin.admin.field.urlOnLoginError.desc")</div>
+    
+    ## Content for Logout Redirection page
+	<div class="field-label">$i18n.getText("saml2plugin.admin.field.loggedOutPageTemplate")</div>
+        <textarea class="field-input" name="loggedOutPageTemplate" id="loggedOutPageTemplate"
+                  rows="10">$generalUtil.htmlEncode( $loggedOutPageTemplate )</textarea>
+    <div class="field-desc">$i18n.getText("saml2plugin.admin.field.loggedOutPageTemplate.desc")</div>
+
+    ## SAML Max Authentification Age
     <div class="field-label">$i18n.getText("saml2plugin.admin.field.maxAuthenticationAge")</div>
     <input class="field-input" type="text" name="maxAuthenticationAge" id="maxAuthenticationAge"
            value="$maxAuthenticationAge"/>
     <div class="field-desc">$i18n.getText("saml2plugin.admin.field.maxAuthenticationAge.desc")</div>
+    
+    ## Is IDP Required (SSO)
     <div class="field-label field-label-checkbox">
         <input type="checkbox" name="idpRequired" id="idpRequired" class="checkbox"
             #if ($idpRequired.equals("true"))
@@ -64,6 +94,8 @@
             #end>$i18n.getText("saml2plugin.admin.field.idpRequired")
     </div>
     <div class="field-desc field-desc-checkbox">$i18n.getText("saml2plugin.admin.field.idpRequired.desc")</div>
+
+    ## SAML Is Auto Creation Enabled
     <div class="field-label field-label-checkbox">
         <input type="checkbox" name="autoCreateUser" id="autoCreateUser" class="checkbox"
             #if ($autoCreateUser.equals("true"))
@@ -71,6 +103,7 @@
             #end>$i18n.getText("saml2plugin.admin.field.autoCreateUser")
     </div>
 
+    ## SAML Default Group for Auto-Creation
     <div class="field-desc field-desc-checkbox">$i18n.getText("saml2plugin.admin.field.autoCreateUser.desc")</div>
 
     <div class="field-label">$i18n.getText("saml2plugin.admin.field.autoCreateUserDefaultGroup")</div>

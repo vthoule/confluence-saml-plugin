@@ -24,11 +24,13 @@ AJS.$(function() {
     AJS.$(".aui.login-form-container").hide();
     AJS.$('<div class="field-group"><a class="aui-button aui-style aui-button-primary" href="plugins/servlet/saml/auth" style="align:center;">Use Corporate Login</a></div><h2 style="margin-top:10px"></h2>').insertAfter(AJS.$(".aui.login-form-container #action-messages"));
 
+    var hasError = false;
     var query = location.search.substr(1);
     query.split("&").forEach(function(part) {
       var item = part.split("=");
       if (item.length == 2 && item[0] == "samlerror") {
         var errorKeys = {};
+        var hasError = true;
         errorKeys["general"] = "General SAML configuration error";
         errorKeys["user_not_found"] = "User was not found";
         errorKeys["plugin_exception"] = "SAML plugin internal error";
@@ -55,22 +57,24 @@ AJS.$(function() {
       });
       return;
     }
-
-    $.ajax({
-      url : AJS.contextPath() + "/plugins/servlet/saml/getajaxconfig?param=idpRequired",
-      type : "GET",
-      error : function() {
-      },
-      success : function(response) {
-        if (response == "true") {
-          // AJS.$('<img src="download/resources/com.bitium.confluence.SAML2Plugin/images/progress.png"/>').insertBefore(AJS.$(".aui.login-form-container"));
-          AJS.$('<p>Please wait while we redirect you to your company log in page</p>').insertBefore(AJS.$(".aui.login-form-container"));
-          window.location.href = 'plugins/servlet/saml/auth';
-
-        } else {
-          AJS.$(".aui.login-form-container").show();
-        }
-      }
-    });
+    
+    if (hasError == false) {
+    	$.ajax({
+    		url : AJS.contextPath() + "/plugins/servlet/saml/getajaxconfig?param=idpRequired",
+    		type : "GET",
+    		error : function() {
+    		},
+    		success : function(response) {
+    			if (response == "true") {
+    				// AJS.$('<img src="download/resources/com.bitium.confluence.SAML2Plugin/images/progress.png"/>').insertBefore(AJS.$(".aui.login-form-container"));
+    				AJS.$('<p>Please wait while we redirect you to your company log in page</p>').insertBefore(AJS.$(".aui.login-form-container"));
+    				window.location.href = 'plugins/servlet/saml/auth';
+    				
+    			} else {
+    				AJS.$(".aui.login-form-container").show();
+    			}
+    		}
+    	});
+	}
   }
 });
